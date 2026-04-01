@@ -1,0 +1,29 @@
+class Solution:
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        #preMap = { i:[] for i in range(numCourses)} 格式是{ key : value for item in 可迭代对象 }
+
+        preMap = {}
+        for i in range(numCourses):
+            preMap[i] = []
+
+        for crs, pre in prerequisites:
+            preMap[crs].append(pre)
+        
+        # visitSet = all courses along the curr DFS path
+        visitSet = set()
+        def dfs(crs):
+            if crs in visitSet:
+                return False
+            if preMap[crs] == []:
+                return True
+            
+            visitSet.add(crs)
+            for pre in preMap[crs]:
+                if not dfs(pre): return False
+            visitSet.remove(crs)
+            preMap[crs] = []
+            return True
+        
+        for crs in range(numCourses): #防止所有course不是都连在一起
+            if not dfs(crs): return False
+        return True
